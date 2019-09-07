@@ -87,9 +87,6 @@ func OpenWithI2c(i2cDevice *i2c.Device, height int) (*OLED, error) {
 	w := ssd1306_LCDWIDTH
 	h := height
 
-	if err := i2cDevice.Write(initSeq); err != nil {
-		return nil, err
-	}
 	buf := make([]byte, w*(h/8)+1)
 	buf[0] = 0x40 // start frame of pixel data
 	return &OLED{dev: i2cDevice, w: w, h: h, buf: buf}, nil
@@ -178,13 +175,13 @@ func (o *OLED) Draw() error {
 	return o.dev.Write(o.buf)
 }
 
-// StartScroll starts scrolling in the horizontal direction starting from
+// EnableScroll starts scrolling in the horizontal direction starting from
 // startY column to endY column.
 func (o *OLED) EnableScroll(startY, endY int) error {
 	panic("not implemented")
 }
 
-// StopStrolls stops the scrolling on the display.
+// DisableScroll stops the scrolling on the display.
 func (o *OLED) DisableScroll() error {
 	panic("not implemented")
 }
