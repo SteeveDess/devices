@@ -80,6 +80,21 @@ func Open(o driver.Opener) (*OLED, error) {
 	return &OLED{dev: dev, w: w, h: h, buf: buf}, nil
 }
 
+// OpenWithI2c create an OLED object using a giving i2cDevice . Once not in use, it needs to
+// be close by calling Close.
+// The default width is 128, height is 64 if zero values are given.
+func OpenWithI2c(i2cDevice *i2c.Device, height int) (*OLED, error) {
+	w := ssd1306_LCDWIDTH
+	h := height
+
+	if err := i2cDevice.Write(initSeq); err != nil {
+		return nil, err
+	}
+	buf := make([]byte, w*(h/8)+1)
+	buf[0] = 0x40 // start frame of pixel data
+	return &OLED{dev: i2cDevice, w: w, h: h, buf: buf}, nil
+}
+
 // On turns on the display if it is off.
 func (o *OLED) On() error {
 	return o.dev.Write([]byte{ssd1306_DISPLAY_ON})
